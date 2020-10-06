@@ -20,8 +20,10 @@ a = Analysis(['../run.py'],
                  'dns.alidns',
                  'dns.dnspod_com',
                  'dns.dnscom',
-                 'dns.cloudflare'
-                 'dns.huaweidns'
+                 'dns.cloudflare',
+                 'dns.he',
+                 'dns.huaweidns',
+                 'dns.callback'
              ],
              hookspath=[],
              runtime_hooks=[],

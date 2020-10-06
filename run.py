@@ -11,7 +11,7 @@ from json import load as loadjson, dump as dumpjson
 from time import ctime
 from os import path, environ, stat, name as os_name
 from tempfile import gettempdir
-from logging import DEBUG, basicConfig, info, warning, error
+from logging import DEBUG, basicConfig, info, warning, error, debug
 from subprocess import check_output
 
 import sys
@@ -79,13 +79,18 @@ def get_config(key=None, default=None, path="config.json"):
         return get_config.config
 
 
-def get_ip(ip_type):
+def get_ip(ip_type, index="default"):
     """
     get IP address
     """
-    index = get_config('index' + ip_type, "default")
     if index is False:  # disabled
         return False
+    elif type(index) == list:  # 如果获取到的规则是列表，则依次判断列表中每一个规则，直到找到一个可以正确获取到的IP
+        value = None
+        for i in index:
+            value = get_ip(ip_type, i)
+            if value:
+                break
     elif str(index).isdigit():  # 数字 local eth
         value = getattr(ip, "local_v" + ip_type)(index)
     elif index.startswith('cmd:'):  # cmd
@@ -126,11 +131,13 @@ def update_ip(ip_type, cache, dns, proxy_list):
     更新IP
     """
     ipname = 'ipv' + ip_type
-    domains = get_config('ipv' + ip_type)
+    domains = get_config(ipname)
     if not domains:
         return None
-    address = get_ip(ip_type)
+    index_rule = get_config('index' + ip_type, "default")  # 从配置中获取index配置
+    address = get_ip(ip_type, index_rule)
     if not address:
+        error('Fail to get %s address!' ,ipname)
         return False
     elif cache and (address == cache[ipname]):
         print('.', end=" ")  # 缓存命中
@@ -178,9 +185,11 @@ def main():
     cache = get_config('cache', True) and Cache(CACHE_FILE)
     if cache is False:
         info("Cache is disabled!")
-    elif len(cache) < 1 or get_config.time >= cache.time:
+    elif get_config.time >= cache.time:
         warning("Cache file is out of dated.")
         cache.clear()
+    elif not cache:
+        debug("Cache is empty.")
     update_ip('4', cache, dns, proxy_list)
     update_ip('6', cache, dns, proxy_list)
 

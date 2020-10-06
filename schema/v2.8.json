@@ -34,7 +34,7 @@
       "$id": "/properties/dns",
       "type": "string",
       "title": "DNS Provider",
-      "description": "dns服务商:阿里为alidns,DNS.COM为dnscom,DNSPOD国际版为(dnspod_com),cloudflare,HE.net为he",
+      "description": "dns服务商:阿里为alidns,DNS.COM为dnscom,DNSPOD国际版为(dnspod_com),cloudflare,HE.net为he,华为DNS为huaweidns,自定义回调为callback",
       "default": "dnspod",
       "examples": [
         "dnspod",
@@ -48,7 +48,8 @@
         "dnspod_com",
         "dnscom",
         "he",
-        "huaweidns"
+        "huaweidns",
+        "callback"
       ]
     },
     "ipv4": {
@@ -90,8 +91,19 @@
       "type": [
         "string",
         "integer",
-        "boolean"
+        "boolean",
+        "array"
       ],
+      "items": {
+        "type": [
+          "string",
+          "integer"
+        ],
+        "minimum": 0
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "minimum": 0,
       "title": "IPv4 address Setting",
       "description": "本机 IPv4 获取方式设置",
       "default": "default",
@@ -109,8 +121,19 @@
       "type": [
         "string",
         "integer",
-        "boolean"
+        "boolean",
+        "array"
       ],
+      "items": {
+        "type": [
+          "string",
+          "integer"
+        ],
+        "minimum": 0
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "minimum": 0,
       "title": "IPv6 address Setting",
       "description": "本机 IPv6 获取方式设置",
       "default": "default",
